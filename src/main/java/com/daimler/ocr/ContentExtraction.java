@@ -1,6 +1,7 @@
 package com.daimler.ocr;
 
 import com.daimler.model.VrcModel;
+import com.daimler.util.RegExpUtil;
 import com.daimler.util.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -244,27 +245,15 @@ public class ContentExtraction {
                 }
 
                 JSONArray array = jsonobj1.getJSONArray("lines");
+                String fullContent = "";
                 for(int j = 0; j<array.length(); j++){
                     JSONObject obj = array.getJSONObject(j);
                     String line = obj.getString("line");
-                    JSONArray coords = obj.getJSONArray("coords");
-                    int [] contentLoc = new int[]{coords.getInt(0), coords.getInt(1), coords.getInt(2), coords.getInt(3)
-                            ,coords.getInt(4), coords.getInt(5), coords.getInt(6), coords.getInt(7)};
-
-                    int XCenterLoc = (contentLoc[0]+contentLoc[2]+contentLoc[4]+contentLoc[6])/4;
-                    int YCenterLoc = (contentLoc[1]+contentLoc[3]+contentLoc[5]+contentLoc[7])/4;
-                    if(j <= 20) {
-                        for(Iterator<int []> it = rects.iterator(); it.hasNext();) {
-                            int [] tagloc = it.next();
-                            //(tagloc[0], tagloc[1]), (tagloc[2], tagloc[3]), (tagloc[4], tagloc[5]), (tagloc[6], tagloc[7])
-                            //
-                            if (tagloc[0]<XCenterLoc  && XCenterLoc<tagloc[2] && tagloc[1]<YCenterLoc && YCenterLoc<tagloc[7]) {
-
-                                //break;
-                            }
-                        }
-                    }
+                    fullContent += line;
                 }
+                vrcModel.setVehicleCertificateNumber_ocrValue(RegExpUtil.getAllValuesByRegExpressionAndGroupIndex("[0-9]{12}", fullContent, 1).get(0));
+                vrcModel.setMortgageeName_ocrValue(RegExpUtil.getAllValuesByRegExpressionAndGroupIndex("名称[:]*([^\\u4e00-\\u9fa5-]+?)", fullContent, 1).get(0));
+                vrcModel.setOrganizationCode_ocrValue(RegExpUtil.getAllValuesByRegExpressionAndGroupIndex("证书[/]*([0-9-]+)抵押", fullContent, 1).get(0));
             }
         }
     }

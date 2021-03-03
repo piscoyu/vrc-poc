@@ -56,11 +56,11 @@ public class VRCProcessJob {
 //        System.out.println("Hello World!");
     }
 
-    public static final void  ocr() throws Exception{
+    public static final VrcModel  ocr() throws Exception{
 
         BoxDetection();
-        //ocrmerge();
-        //extract();
+        ocrmerge();
+       return extract();
     }
 
     public static final void  BoxDetection() throws Exception{
@@ -82,7 +82,6 @@ public class VRCProcessJob {
         VrcModel vrcModel = new VrcModel();
         ContentExtraction.VRC0Extract(finalJPGdataPath, finalJPGdataPath, "000_0.json",vrcModel);
         ContentExtraction.VRC1ExtractEx(finalJPGdataPath, finalJPGdataPath, "000_1.json",vrcModel);
-
         ContentExtraction.VRC2Extract(finalJPGdataPath, finalJPGdataPath, "001_0.json",vrcModel);
 
         return vrcModel;
